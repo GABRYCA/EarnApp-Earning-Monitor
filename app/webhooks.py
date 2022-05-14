@@ -1,7 +1,11 @@
 import json
 
 import requests
+import pymysql
 from discord_webhook import DiscordEmbed, DiscordWebhook
+from datetime import datetime
+
+from app.config import Configuration
 from pyEarnapp.earnapp import DevicesInfo, Transaction, EarningInfo, UserData
 from functions import AllInformation
 
@@ -151,7 +155,7 @@ class WebhookTemplate:
 
     # def device_status_change(self, info: AllInformation, ):
 
-    def balance_update(self, info: AllInformation, delay: int):
+    def balance_update(self, info: AllInformation, delay: int, config: Configuration):
         global lastUpdateBalanceChange, lastUpdateTrafficChange
         webhook = DiscordWebhook(url=info.webhook_url, rate_limit_retry=True)
         change = round(info.earnings_info.balance - info.previous_balance, 2)
@@ -170,6 +174,13 @@ class WebhookTemplate:
             value = "No change in traffic."
         else:
             value = f'{round(change / (traffic_change / 1024), 2)} $/GB'
+
+        # Check if config DB_HOST is not None and upload data to DB
+        if config.DB_HOST is not None:
+            cnx = pymysql.connect(user=config.DB_USER, password=config.DB_PASSWORD, host=config.DB_HOST, database=config.DB_NAME)
+            cursor = cnx.cursor()
+            cursor.execute("INSERT INTO earnings (time, traffic, earnings) VALUES (?,?,?)", (datetime.now(), format(traffic_change, ".2f"), change))
+            cnx.close()
 
         embed = DiscordEmbed(
             title=title,

@@ -1,6 +1,7 @@
 import os
 import io
 import json
+import pymysql
 from time import sleep
 
 
@@ -35,6 +36,38 @@ class Configuration:
         self.AUTOMATIC_REDEEM = (input("Do you want to use automatic redeeming?\n\t[i] This helps getting your "
                                              "money faster.\n\t[i] If you don't want to use this feature just put 0 here else put the belance that has to be exceeted here [>2.5]\n\t: ")) if os.environ.get("AUTOMATIC_REDEEM") is None \
             else os.environ.get("AUTOMATIC_REDEEM")
+        if input("Do you want to use a Mysql/MariaDB database?\n\tYes/No: ").lower() == "yes":
+            endloop = False
+            while not endloop:
+                self.DB_HOST = input("Enter the host of the database (example: 'localhost')\n\t: ")
+                self.DB_USER = input("Enter the username of the database (example: 'root')\n\t: ")
+                self.DB_PASSWORD = input("Enter the password of the database (example: '')\n\t: ")
+                self.DB_NAME = "earnapp_" + input("Enter the name of the database (example: 'monitor')\n\t: ")
+                endloop = True
+                # Test connection
+                try:
+                    cnx = pymysql.connect(user=self.DB_USER, password=self.DB_PASSWORD, host=self.DB_HOST)
+                    cnx.close()
+                except Exception as e:
+                    print("Couldn't connect to the database.\n\tError: " + str(e))
+                    self.DB_HOST = None
+                    self.DB_USER = None
+                    self.DB_PASSWORD = None
+                    self.DB_NAME = None
+                    if input("Do you want to try again?\n\tYes/No: ").lower() == "yes":
+                        endloop = False
+                    else:
+                        endloop = True
+
+
+        if self.DB_HOST is not None:
+            cnx = pymysql.connect(user=self.DB_USER, password=self.DB_PASSWORD, host=self.DB_HOST, database=self.DB_NAME)
+            cursor = cnx.cursor()
+            cursor.execute("CREATE DATABASE IF NOT EXISTS " + self.DB_NAME)
+            cursor.execute("CREATE TABLE IF NOT EXISTS earnings (time datetime, traffic double, earnings double)")
+            print("Database and table created.")
+            cnx.close()
+
         self.create_config()
 
     def __want_to_reset_config(self):
@@ -51,7 +84,7 @@ class Configuration:
                 got_response = True
                 self.__reuse_config = False
             else:
-                print("Didn't quiet understand, try again!")
+                print("Didn't quite understand, try again!")
 
     def check_for_existing_config(self):
         self.home_directory = os.path.expanduser("~")

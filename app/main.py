@@ -217,7 +217,7 @@ def Worker():
                     f"Your balance has not changed. Current balance: {info.earnings_info.balance}")
                 graphics.balance_unchanged(
                     f"No traffic change detected. Current bandwidth usage: {bandwidth} MB")
-            webhook_templates.balance_update(info, config.DELAY)
+            webhook_templates.balance_update(info, config.DELAY, config)
 
             # new redeem request
             graphics.info(
