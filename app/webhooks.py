@@ -5,7 +5,7 @@ import pymysql
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from datetime import datetime
 
-from app.config import Configuration
+from config import Configuration
 from pyEarnapp.earnapp import DevicesInfo, Transaction, EarningInfo, UserData
 from functions import AllInformation
 
