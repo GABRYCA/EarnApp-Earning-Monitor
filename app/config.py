@@ -61,9 +61,10 @@ class Configuration:
 
 
         if self.DB_HOST is not None:
-            cnx = pymysql.connect(user=self.DB_USER, password=self.DB_PASSWORD, host=self.DB_HOST, database=self.DB_NAME)
+            cnx = pymysql.connect(user=self.DB_USER, password=self.DB_PASSWORD, host=self.DB_HOST)
             cursor = cnx.cursor()
             cursor.execute("CREATE DATABASE IF NOT EXISTS " + self.DB_NAME)
+            cursor.execute("USE " + self.DB_NAME)
             cursor.execute("CREATE TABLE IF NOT EXISTS earnings (time datetime, traffic double, earnings double)")
             print("Database and table created.")
             cnx.close()
@@ -110,6 +111,10 @@ class Configuration:
                 "DELAY": self.DELAY,
                 "WEBHOOK_URL": self.WEBHOOK_URL,
                 "AUTOMATIC_REDEEM": self.AUTOMATIC_REDEEM,
+                "DB_HOST": self.DB_HOST,
+                "DB_USER": self.DB_USER,
+                "DB_PASSWORD": self.DB_PASSWORD,
+                "DB_NAME": self.DB_NAME
             }
             with io.open(self.config_file_path, "w", encoding="utf-8") as stream:
                 json.dump(config, stream, indent=2)
