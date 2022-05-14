@@ -66,6 +66,7 @@ class Configuration:
             cursor.execute("CREATE DATABASE IF NOT EXISTS " + self.DB_NAME)
             cursor.execute("USE " + self.DB_NAME)
             cursor.execute("CREATE TABLE IF NOT EXISTS earnings (time datetime, traffic double, earnings double)")
+            cnx.commit()
             print("Database and table created.")
             cnx.close()
 

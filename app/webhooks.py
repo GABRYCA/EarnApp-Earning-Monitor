@@ -180,7 +180,11 @@ class WebhookTemplate:
             cnx = pymysql.connect(user=config.DB_USER, password=config.DB_PASSWORD, host=config.DB_HOST, database=config.DB_NAME)
             cursor = cnx.cursor()
             cursor.execute("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
+            cnx.commit()
+            print("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
+            print("Uploaded to DB" + str(traffic_change) + "MB " + str(change) + " $")
             cnx.close()
+
 
         embed = DiscordEmbed(
             title=title,
