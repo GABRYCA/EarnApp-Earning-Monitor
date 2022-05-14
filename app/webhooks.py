@@ -5,12 +5,14 @@ import pymysql
 from discord_webhook import DiscordEmbed, DiscordWebhook
 from datetime import datetime
 
+from graphics import Graphics
 from config import Configuration
 from pyEarnapp.earnapp import DevicesInfo, Transaction, EarningInfo, UserData
 from functions import AllInformation
 
 
 # Very inefficient to make this like this but I leave it for now
+graphics = Graphics()
 
 def offlineDevices(header):
     try:
@@ -181,8 +183,8 @@ class WebhookTemplate:
             cursor = cnx.cursor()
             cursor.execute("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
             cnx.commit()
-            print("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
-            print("Uploaded to DB" + str(traffic_change) + "MB " + str(change) + " $")
+            graphics.info("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
+            graphics.success("Uploaded to DB!")
             cnx.close()
 
 
