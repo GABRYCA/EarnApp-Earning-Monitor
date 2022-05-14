@@ -183,7 +183,6 @@ class WebhookTemplate:
             cursor = cnx.cursor()
             cursor.execute("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
             cnx.commit()
-            graphics.info("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
             graphics.success("Uploaded to DB!")
             cnx.close()
 
