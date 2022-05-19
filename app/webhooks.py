@@ -178,7 +178,7 @@ class WebhookTemplate:
             value = f'{round(change / (traffic_change / 1024), 2)} $/GB'
 
         # Check if config DB_HOST is not None and upload data to DB
-        if config.DB_HOST is not None:
+        if config.DB_HOST is not None and change >= 0 and traffic_change >= 0:
             cnx = pymysql.connect(user=config.DB_USER, password=config.DB_PASSWORD, host=config.DB_HOST, database=config.DB_NAME)
             cursor = cnx.cursor()
             cursor.execute("INSERT INTO earnings (time, traffic, earnings) VALUES (%s,%s,%s)", (datetime.now(), traffic_change, change))
